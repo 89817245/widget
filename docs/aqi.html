@@ -1,0 +1,69 @@
+<html lang="zh-Hant-TW">
+
+  <head>
+    <title>空氣品質</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <script>
+      (() => {
+        window._aqiFeed = window._aqiFeed || function (c, k, n) {
+          const s = window._aqiFeed
+          k = s.k = (s.k || (k ? ('&k=' + k) : ''))
+          s.c = c = (c instanceof Array) ? c : [c]
+          s.n = n = n || 0
+          const tagName = 'script'
+          const script = document.createElement(tagName)
+          const target = document.querySelector(tagName)
+          script.async = 1
+          script.src = 'https://feed.aqicn.org/feed/' + (c[n].city) + '/' + (c[n].lang || '') + '/feed.v1.js?n=' + n + k
+          target.parentNode.insertBefore(script, target)
+        }
+      })()
+    </script>
+    <div id="aqi"></div>
+    <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/cn2t.js"></script>
+    <script>
+      const query = new URLSearchParams(location.search)
+      const city = query.get('city')
+      const lang = query.get('lang')
+      const display = query.get('display')
+      const opts = {
+        city: city ? city : 'taiwan/datong',
+        lang: lang ? lang : 'hk',
+      }
+      if (display) {
+        opts.container = 'aqi'
+        opts.display = display
+      } else {
+        opts.callback = aqi => {
+          console.dir(aqi)
+          switch (opts.lang) {
+            case 'cn':
+            case 'hk': {
+              const converter = OpenCC.Converter({ from: 'cn', to: 'twp' })
+              const fix = OpenCC.CustomConverter([['空氣質量', '空氣品質']])
+              aqi = JSON.parse(fix(converter(JSON.stringify({ ...aqi }))))
+              aqi.details = converter(aqi.details)
+              aqi.details = fix(aqi.details)
+              break
+            }
+          }
+          console.dir(aqi)
+          document.querySelector('#aqi').innerHTML = aqi.details
+        }
+      }
+      window._aqiFeed({ ...opts })
+    </script>
+  </body>
+
+</html>
