@@ -1,0 +1,82 @@
+<html lang="zh-hant-TW">
+
+  <head>
+    <title>YouTube</title>
+    <style>
+      html,
+      body,
+      #youtube {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        width: 100vw;
+        height: 100vh;
+      }
+
+    </style>
+  </head>
+  <script>
+    (() => {
+      const tagName = 'script'
+      const script = document.createElement(tagName)
+      const target = document.querySelector(tagName)
+      script.async = 1
+      script.src = 'https://www.youtube.com/iframe_api'
+      target.parentNode.insertBefore(script, target)
+    })()
+  </script>
+  <div id="player"></div>
+  <script>
+    // YouTube
+    function onYouTubeIframeAPIReady () {
+      console.dir(YT.PlayerState)
+      const query = new URLSearchParams(location.search)
+      const videoId = query.get('v')
+      const second = query.get('s')
+      const controls = query.get('c')
+      const playerVars = { playsinline: 1 }
+      const events = { onReady, onStateChange }
+      if (!videoId) return
+      if (controls) {
+        playerVars.controls = controls === '0' ? 0 : 1
+      }
+      const player = new window.YT.Player('player', {
+        videoId,
+        suggestedQuality: 'hd1080',
+        width: document.body.offsetWidth,
+        height: document.body.offsetHeight,
+        playerVars,
+        events
+      })
+      /*
+       * BUFFERING: 3
+       * CUED: 5
+       * ENDED: 0
+       * PAUSED: 2
+       * PLAYING: 1
+       * UNSTARTED: -1
+       */
+      let state
+      function onReady (e) {
+        console.dir(e)
+        player.playVideo()
+      }
+      function onStateChange (e) {
+        console.dir(e)
+        if (e.data === YT.PlayerState.PLAYING) {
+          return
+        } else if (state === YT.PlayerState.BUFFERING && e.data === YT.PlayerState.UNSTARTED) {
+          console.info('開始播放...', videoId, second)
+          return setTimeout(() => {
+            if (second > 0) {
+              player.seekTo(second)
+            }
+            player.playVideo()
+          }, 1000)
+        }
+        state = player.getPlayerState()
+      }
+    }
+  </script>
+
+</html>
