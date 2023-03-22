@@ -1,0 +1,39 @@
+<html lang="zh-hant-TW">
+
+  <head>
+    <title>AppSheet</title>
+    <style>
+      html,
+      body,
+      #app,
+      #app>iframe {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        line-height: 0;
+        min-width: 100vw;
+        min-height: 100vh;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="app"></div>
+    <script>
+      (() => {
+        const query = new URLSearchParams(location.search)
+        const id = query.get('id')
+        if (!id) return
+        const tagName = 'iframe'
+        const iframe = document.createElement(tagName)
+        const target = document.querySelector('#app')
+        iframe.src = `https://www.appsheet.com/start/${id}?refresh=1&wipe=1`
+        iframe.style.width = document.body.offsetWidth
+        iframe.style.height = document.body.offsetHeight
+        target.appendChild(iframe)
+      })()
+    </script>
+  </body>
+
+</html>
