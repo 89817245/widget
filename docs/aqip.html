@@ -1,0 +1,40 @@
+<html lang="zh-Hant-TW">
+
+  <head>
+    <title>空氣品質</title>
+    <style>
+      html,
+      body,
+      #aqi {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        min-width: 100vw;
+        min-height: 100vh;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="aqi"></div>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script>
+      (function f (date) {
+        const query = new URLSearchParams(location.search)
+        const city = query.get('city')
+        const lang = query.get('lang')
+        const target = document.querySelector('#aqi')
+        const format = 'YYYYMMDD-hh'
+        const now = dayjs()
+        if (now.format(format) !== date.format(format)) {
+          console.info(now, date)
+          const imageUri = `https://aqicn.org/snapshot/${city || 'taiwan/datong'}/${now.format(format)}/${lang || 'hk'}/air-quality.png?_=${now.valueOf()}`
+          target.style.background = `url(${imageUri}) no-repeat center center / contain`
+        }
+        return setTimeout(f, 10000, now)
+      })(dayjs(0))
+    </script>
+  </body>
+
+</html>
