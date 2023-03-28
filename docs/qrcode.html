@@ -1,0 +1,63 @@
+<html lang="zh-Hant-TW">
+
+  <head>
+    <title>二維條碼</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        min-width: 100vw;
+        min-height: 100vh;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="qrcode"></div>
+    <script src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+    <script>
+      (function f () {
+        const query = new URLSearchParams(location.search)
+        const data = query.get('data')
+        const size = parseInt(query.get('size') || Math.min(document.body.offsetWidth, document.body.offsetHeight))
+        const type = query.get('type') || 'square'
+        const image = query.get('image') || 'image/qrcode.png'
+        const target = document.querySelector('#qrcode')
+        const margin = parseInt(size * 0.01)
+        const opts = {
+          data,
+          width: size,
+          height: size,
+          image,
+          qrOptions: {
+            errorCorrectionLevel: 'H'
+          },
+          backgroundOptions: {
+            color: '#f0f0f0',
+          },
+          dotsOptions: {
+            color: '#0f0f0f',
+            type
+          },
+          imageOptions: {
+            imageSize: 0.5,
+            margin,
+            crossOrigin: 'anonymous'
+          }
+        }
+        const code = new QRCodeStyling(opts)
+        code.append(target)
+      })()
+    </script>
+  </body>
+
+</html>
