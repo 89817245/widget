@@ -1,0 +1,38 @@
+<html lang="zh-hant-TW">
+
+  <head>
+    <title>文字轉語音</title>
+  </head>
+
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2"></script>
+    <script>
+      (async function () {
+        if (!'speechSynthesis' in window) {
+          const text = '不支援此功能'
+          Swal.fire({
+            text,
+            icon: 'error',
+          })
+          console.error('不支援此功能')
+          return
+        }
+        const query = new URLSearchParams(location.search)
+        const text = query.get('text')
+        const speech = window.speechSynthesis
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.addEventListener('end', e => {
+          Swal.increaseTimer(-1 * Swal.getTimerLeft())
+        })
+        Swal.fire({
+          text,
+          showConfirmButton: false,
+          timer: 86400 * 30,
+          // timerProgressBar: true,
+        })
+        speech.speak(utterance)
+      })()
+    </script>
+  </body>
+
+</html>
